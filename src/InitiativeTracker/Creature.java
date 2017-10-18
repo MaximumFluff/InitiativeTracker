@@ -1,5 +1,7 @@
 package InitiativeTracker;
 
+import java.util.Comparator;
+
 public class Creature implements Comparable<Creature>
 {
     private int health, initiative, ac;
@@ -60,7 +62,7 @@ public class Creature implements Comparable<Creature>
     @Override
     public int compareTo(Creature p1)
     {
-        return p1.getInitiative() - this.getInitiative();
+        return this.initiative - p1.initiative;
     }
 
     // TODO improve this shit
@@ -70,3 +72,5 @@ public class Creature implements Comparable<Creature>
                 name + ", Initiative: " + initiative + ", hit points: " + health;
     }
 }
+
+// Used this link to help implement sorting method: https://stackoverflow.com/questions/2784514/sort-arraylist-of-custom-objects-by-property

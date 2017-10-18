@@ -17,6 +17,7 @@ public class InitiativeTracker
         int playerAmount = Integer.parseInt(args[0]);
         int enemyAmount = Integer.parseInt(args[1]);
         List<Creature> creatureList = new CopyOnWriteArrayList<Creature>();
+        Collections.sort(creatureList);
         generateCreatures(creatureList, playerAmount, enemyAmount);
     }
 
@@ -67,7 +68,7 @@ public class InitiativeTracker
         {
             for (Creature creatureObject : list)
             {
-                System.out.println("---" + creatureObject.getName() + "---\n");
+                System.out.println("Current player: ---" + creatureObject.getName() + "---\n");
                 updateHealth(list);
             }
         }
