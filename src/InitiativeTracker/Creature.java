@@ -60,7 +60,7 @@ public class Creature implements Comparable<Creature>
     @Override
     public int compareTo(Creature p1)
     {
-        return p1.initiative - this.initiative;
+        return p1.getInitiative() - this.getInitiative();
     }
 
     // TODO improve this shit
