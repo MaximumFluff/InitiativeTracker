@@ -1,6 +1,8 @@
 package InitiativeTracker;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Predicate;
 
 public class InitiativeTracker
 {
@@ -14,12 +16,12 @@ public class InitiativeTracker
         }
         int playerAmount = Integer.parseInt(args[0]);
         int enemyAmount = Integer.parseInt(args[1]);
-        HashMap<String, Creature> creatureList = new HashMap<String, Creature>();
+        List<Creature> creatureList = new ArrayList<Creature>();
         generateCreatures(creatureList, playerAmount, enemyAmount);
     }
 
     // TODO: try to clean this shit up
-    public static void generateCreatures(HashMap<String, Creature> list, int players, int enemies)
+    public static void generateCreatures(List<Creature> list, int players, int enemies)
     {
         Scanner reader = new Scanner(System.in);
         System.out.println("--- Generate the characters! ---");
@@ -45,7 +47,7 @@ public class InitiativeTracker
             System.out.print("Creature initiative score: ");
             initiative = Integer.parseInt(reader.nextLine());
             newCritter = new Creature(name, health, ac, initiative, isPlayer);
-            list.put(name, newCritter);
+            list.add(newCritter);
         }
 
         combatRound(players, list);
@@ -53,28 +55,40 @@ public class InitiativeTracker
     }
 
 
-    public static void combatRound(int playerAmount, HashMap<String, Creature> list)
+    public static void combatRound(int playerAmount, List<Creature> list)
     {
+
+
+        Collections.sort(list);
+        printList(list);
         Scanner reader = new Scanner(System.in);
-        String query;
+
         // While all creatures not dropped from list, keep looping
         //Collections.sort(list);
         System.out.println("--- Combat starts! ---");
-        while (list.size() != playerAmount)
+        for (Iterator<Creature> itr = list.iterator(); itr.hasNext();)
         {
-            for (Creature creatureObject : list.values())
+            Creature creature = itr.next();
+            System.out.println("Current player: ---" + creature.getName() + "---\n");
+            updateHealth(list);
+            list.removeIf(i -> i.getHealth() == 0);
+
+            if (!itr.hasNext() && list.size() != playerAmount)
             {
-                System.out.println("---" + creatureObject.getName() + "---\n");
-                updateHealth(list);
+                combatRound(playerAmount, list);
             }
+
+
         }
         System.out.print("--- All enemy combatants dead! ---");
         reader.close();
     }
 
     // TODO: fix this method, dynamically alter creatures health values and drop from list
-    public static void updateHealth(HashMap<String, Creature> list)
+    public static void updateHealth(List<Creature> list)
     {
+        printList(list);
+        ArrayList<Creature> toRemove = new ArrayList<Creature>();
         String query;
         String findName;
         int newHp;
@@ -88,16 +102,24 @@ public class InitiativeTracker
             findName = reader.nextLine();
             System.out.print("New hit points: ");
             newHp = Integer.parseInt(reader.nextLine());
-            p = list.get(findName);
-            if (newHp == 0)
+            for (Creature creature: list)
             {
-                list.remove(findName);
+                if (creature.getName().equals(findName))
+                {
+                    creature.setHealth(newHp);
+                }
             }
-            else
-            {
-                p.setHealth(newHp);
-            }
+        }
+    }
 
+
+    public static void printList(List<Creature> list)
+    {
+        for (Creature creatureObject : list)
+        {
+            System.out.print("---" + creatureObject.getName() + "---" + creatureObject.getInitiative() + "---\n");
         }
     }
 }
+
+// Implemented deleting from ArrayList with: http://www.baeldung.com/java-concurrentmodificationexception

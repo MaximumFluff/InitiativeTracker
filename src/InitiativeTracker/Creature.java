@@ -1,5 +1,7 @@
 package InitiativeTracker;
 
+import java.util.Comparator;
+
 public class Creature implements Comparable<Creature>
 {
     private int health, initiative, ac;
