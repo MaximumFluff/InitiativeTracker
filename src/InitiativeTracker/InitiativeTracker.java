@@ -123,3 +123,5 @@ public class InitiativeTracker
 }
 
 // Implemented deleting from ArrayList with: http://www.baeldung.com/java-concurrentmodificationexception
+
+// Implemented Iterator with: https://stackoverflow.com/questions/9633991/how-to-check-if-processing-the-last-item-in-an-iterator
