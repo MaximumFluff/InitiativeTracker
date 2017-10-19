@@ -16,8 +16,7 @@ public class InitiativeTracker
         }
         int playerAmount = Integer.parseInt(args[0]);
         int enemyAmount = Integer.parseInt(args[1]);
-        List<Creature> creatureList = new CopyOnWriteArrayList<Creature>();
-        Collections.sort(creatureList);
+        List<Creature> creatureList = new ArrayList<Creature>();
         generateCreatures(creatureList, playerAmount, enemyAmount);
     }
 
@@ -58,19 +57,28 @@ public class InitiativeTracker
 
     public static void combatRound(int playerAmount, List<Creature> list)
     {
+
+
+        Collections.sort(list);
         printList(list);
         Scanner reader = new Scanner(System.in);
-        String query;
+
         // While all creatures not dropped from list, keep looping
         //Collections.sort(list);
         System.out.println("--- Combat starts! ---");
-        while (list.size() != playerAmount)
+        for (Iterator<Creature> itr = list.iterator(); itr.hasNext();)
         {
-            for (Creature creatureObject : list)
+            Creature creature = itr.next();
+            System.out.println("Current player: ---" + creature.getName() + "---\n");
+            updateHealth(list);
+            list.removeIf(i -> i.getHealth() == 0);
+
+            if (!itr.hasNext() && list.size() != playerAmount)
             {
-                System.out.println("Current player: ---" + creatureObject.getName() + "---\n");
-                updateHealth(list);
+                combatRound(playerAmount, list);
             }
+
+
         }
         System.out.print("--- All enemy combatants dead! ---");
         reader.close();
@@ -80,6 +88,7 @@ public class InitiativeTracker
     public static void updateHealth(List<Creature> list)
     {
         printList(list);
+        ArrayList<Creature> toRemove = new ArrayList<Creature>();
         String query;
         String findName;
         int newHp;
@@ -93,21 +102,16 @@ public class InitiativeTracker
             findName = reader.nextLine();
             System.out.print("New hit points: ");
             newHp = Integer.parseInt(reader.nextLine());
-            Iterator<Creature> itr = list.iterator();
-            while (itr.hasNext())
+            for (Creature creature: list)
             {
-                Creature find = itr.next();
-                if (find.getName().equals(findName))
+                if (creature.getName().equals(findName))
                 {
-                    find.setHealth(newHp);
-                    if (find.getHealth() == 0)
-                    {
-                        list.remove(find);
-                    }
+                    creature.setHealth(newHp);
                 }
             }
         }
     }
+
 
     public static void printList(List<Creature> list)
     {
@@ -117,3 +121,5 @@ public class InitiativeTracker
         }
     }
 }
+
+// Implemented deleting from ArrayList with: http://www.baeldung.com/java-concurrentmodificationexception
